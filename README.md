@@ -14,6 +14,8 @@
 
 - **Writeup：** 
 
+  php抽象类不能被直接实例化，但其子类可以实例化，并可以通过子类来调用父类方法，并且子类必须实现父类的抽象方法，所以可以通过实例化evil来调用到父类的action方法，进入pass方法，此方法为抽象方法，在子类里实现，所以便进入evil的pass方法，再自己定义nomal类和evil的this->c，用url大小写来绕过date函数，实现绕过$this->a->d === shell的判断，用passthru函数绕过函数过滤，用sort读取flag。（当然要先绕过__wakeup()
+
 ```php
 <?php
 class openfunc{
@@ -78,4 +80,3 @@ $a=serialize(new Openfunc());
 echo $a;
 ?>
 ```
-
